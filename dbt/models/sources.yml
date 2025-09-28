@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: taxi_co2   
+    schema: main          
+    tables:
+      - name: yellow_trips_cleaned
+      - name: green_trips_cleaned
+      - name: vehicle_emissions
