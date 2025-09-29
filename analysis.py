@@ -100,32 +100,35 @@ def run_analysis():
             except Exception as e:
                 logger.error(f"Failed month query for {cab}: {e}")
 
-            # Monthly totals for plotting
+            # Yearly totals for plotting (spanning 2015-2025 only)
             try:
-                monthly_totals = con.execute(f"""
-                    SELECT month_of_year, SUM(trip_co2_kgs) AS total_co2
+                yearly_totals = con.execute(f"""
+                    SELECT year, SUM(trip_co2_kgs) AS total_co2
                     FROM {table}
-                    GROUP BY month_of_year
-                    ORDER BY month_of_year;
+                    WHERE year BETWEEN 2015 AND 2025
+                    GROUP BY year
+                    ORDER BY year;
                 """).fetchdf()
-                results[cab] = monthly_totals
-                logger.info(f"Computed monthly totals for {cab}")
+                results[cab] = yearly_totals
+                logger.info(f"Computed yearly totals for {cab} (filtered 2015-2025)")
             except Exception as e:
-                logger.error(f"Failed monthly totals query for {cab}: {e}")
+                logger.error(f"Failed yearly totals query for {cab}: {e}")
 
         # Plot after both cab types processed
         if results:
             try:
-                plt.figure(figsize=(10, 6))
+                plt.figure(figsize=(12, 8))
                 for cab, data in results.items():
-                    plt.plot(data["month_of_year"], data["total_co2"], marker="o", label=f"{cab.capitalize()} Taxis")
-                plt.title("Total CO2 Emissions by Month")
-                plt.xlabel("Month of Year")
-                plt.ylabel("Total CO2 Emissions (kgs)")
-                plt.legend()
-                plt.grid(True)
-                plt.savefig("co2_emissions_by_month.png")
-                logger.info("Saved plot: co2_emissions_by_month.png")
+                    plt.plot(data["year"], data["total_co2"], marker="o", label=f"{cab.capitalize()} Taxis", linewidth=2, markersize=6)
+                plt.title("Total CO2 Emissions by Year (2015-2025)", fontsize=16, fontweight='bold')
+                plt.xlabel("Year", fontsize=14)
+                plt.ylabel("Total CO2 Emissions (kgs)", fontsize=14)
+                plt.legend(fontsize=12)
+                plt.grid(True, alpha=0.3)
+                plt.xticks(rotation=45)
+                plt.tight_layout()
+                plt.savefig("co2_emissions_by_year.png", dpi=300, bbox_inches='tight')
+                logger.info("Saved plot: co2_emissions_by_year.png")
             except Exception as e:
                 logger.error(f"Plotting failed: {e}")
 

@@ -23,7 +23,9 @@ def clean_trips():
                 WHERE passenger_count > 0
                   AND trip_distance > 0
                   AND trip_distance < 100
-                  AND epoch(tpep_dropoff_datetime) - epoch(tpep_pickup_datetime)) < 86400;
+                  AND (epoch(tpep_dropoff_datetime) - epoch(tpep_pickup_datetime)) < 86400
+                  AND extract(year from tpep_pickup_datetime) BETWEEN 2015 AND 2025
+                  AND extract(year from tpep_dropoff_datetime) BETWEEN 2015 AND 2025;
             """)
             logger.info(f"Cleaned and de-duplicated {table} into {table}_cleaned")
 

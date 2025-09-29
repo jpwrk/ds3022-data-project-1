@@ -29,7 +29,8 @@ enriched as (
       extract(hour from b.tpep_pickup_datetime)  as hour_of_day,
       extract(dow  from b.tpep_pickup_datetime)  as day_of_week,
       extract(week from b.tpep_pickup_datetime)  as week_of_year,
-      extract(month from b.tpep_pickup_datetime) as month_of_year
+      extract(month from b.tpep_pickup_datetime) as month_of_year,
+      extract(year from b.tpep_pickup_datetime)  as year
 
     from base b
 )
